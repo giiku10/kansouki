@@ -17,7 +17,6 @@ import com.google.api.core.ApiFuture;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
-import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.FirestoreOptions;
 
@@ -32,7 +31,8 @@ public class FirebaseController {
 
   public FirebaseController() {
     try {
-      FileInputStream refreshToken = new FileInputStream("C:/Users/tany1/OneDrive/デスクトップ/kansou-ki.json");
+      // FileInputStream refreshToken = new FileInputStream("C:/Users/tany1/OneDrive/デスクトップ/kansou-ki.json");
+      FileInputStream refreshToken = new FileInputStream("/home/ubuntu/kansou-ki.json");
       FirestoreOptions firestoreOptions = FirestoreOptions.getDefaultInstance().toBuilder()
           .setCredentials(GoogleCredentials.fromStream(refreshToken)).build();
       db = firestoreOptions.getService();
