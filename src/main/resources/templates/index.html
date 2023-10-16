@@ -1,6 +1,7 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
+        <link rel="shortcut icon" type="image/png" href="https://drive.google.com/uc?id=1gSe-v4qfUHP_vrhCQMg0RSmkOYpbbzT6&png">
         <meta charset="UTF-8" />
         <title>感想機</title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
@@ -14,7 +15,7 @@
         const classId = getParam("class");
         window.onload = function(){
           if(classId == null){
-            
+
           } else{
             $.post("/class", {classId: classId}, function(data){
               console.log(data);
