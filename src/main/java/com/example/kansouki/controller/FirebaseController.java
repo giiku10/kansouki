@@ -61,7 +61,7 @@ public class FirebaseController {
     return classObject;
   }
 
-  @PostMapping("sendValue")
+  @PostMapping("/sendValue")
   @ResponseBody
   public String sendData(String partId, Integer value) {
     DocumentReference partRef = db.collection("Parts").document(partId);
