@@ -32,8 +32,8 @@ public class FirebaseController {
 
   public FirebaseController() {
     try {
-      // FileInputStream refreshToken = new FileInputStream("C:/Users/tany1/OneDrive/デスクトップ/kansou-ki.json");
-      FileInputStream refreshToken = new FileInputStream("/home/ubuntu/kansou-ki.json");
+       FileInputStream refreshToken = new FileInputStream("C:/Users/shank/gcp/kansou-ki-firebase-adminsdk-8s0yf-45b273b23f.json");
+      //FileInputStream refreshToken = new FileInputStream("/home/ubuntu/kansou-ki.json");
       FirestoreOptions firestoreOptions = FirestoreOptions.getDefaultInstance().toBuilder()
           .setCredentials(GoogleCredentials.fromStream(refreshToken)).build();
       db = firestoreOptions.getService();
@@ -55,7 +55,7 @@ public class FirebaseController {
     try {
       DocumentSnapshot snapshot = future.get();
       classObject = new ClassObject(snapshot);
-      classObject.load(db);
+      classObject.load(db, session.getId());
     } catch (Exception e) {
       System.out.println(e);
     }
