@@ -73,4 +73,10 @@ public class FirebaseController {
     partRef.set(difficultyData, SetOptions.merge());
     return "test";
   }
+
+  @PostMapping("/createClass")
+  @ResponseBody
+  public String createClass(String token, String className, Integer numOfStudents){
+    return "success";
+  }
 }
