@@ -19,6 +19,7 @@ import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.FirestoreOptions;
+import com.google.cloud.firestore.SetOptions;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -61,13 +62,15 @@ public class FirebaseController {
     return classObject;
   }
 
-  @PostMapping("sendValue")
+  @PostMapping("/sendValue")
   @ResponseBody
   public String sendData(String partId, Integer value) {
     DocumentReference partRef = db.collection("Parts").document(partId);
-    Map<String, Integer> data = new HashMap<String, Integer>();
+    Map<String, Map<String, Integer>> difficultyData = new HashMap<>();
+    Map<String, Integer> data = new HashMap<>();
     data.put(session.getId(), value);
-    partRef.update("difficulty", data);
+    difficultyData.put("difficulty", data);
+    partRef.set(difficultyData, SetOptions.merge());
     return "test";
   }
 }
