@@ -25,7 +25,7 @@ public class ClassObject {
   }
 
   public void load(Firestore db, String sessionId){
-    ApiFuture<QuerySnapshot> query = db.collection("Parts").whereEqualTo("parent", id).get();
+    ApiFuture<QuerySnapshot> query = db.collection("Parts").whereEqualTo("classId", id).whereEqualTo("parent", "").get();
     try{
       QuerySnapshot querySnapshot = query.get();
       List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
