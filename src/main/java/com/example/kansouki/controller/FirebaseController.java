@@ -32,10 +32,9 @@ public class FirebaseController {
 
   public FirebaseController() {
     try {
-       FileInputStream refreshToken = new FileInputStream("C:/Users/shank/gcp/kansou-ki-firebase-adminsdk-8s0yf-45b273b23f.json");
       //FileInputStream refreshToken = new FileInputStream("/home/ubuntu/kansou-ki.json");
       FirestoreOptions firestoreOptions = FirestoreOptions.getDefaultInstance().toBuilder()
-          .setCredentials(GoogleCredentials.fromStream(refreshToken)).build();
+          .setCredentials(GoogleCredentials.getApplicationDefault()).build();
       db = firestoreOptions.getService();
     } catch (IOException e) {
       e.printStackTrace();
