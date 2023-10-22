@@ -15,7 +15,6 @@
         const classId = getParam("class");
         window.onload = function(){
           if(classId == null){
-
           } else{
             $.post("/class", {classId: classId}, function(data){
               console.log(data);
