@@ -1,6 +1,6 @@
 package com.example.kansouki.controller;
 
-import java.io.FileInputStream;
+//import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,10 +34,9 @@ public class FirebaseController {
 
   public FirebaseController() {
     try {
-      // FileInputStream refreshToken = new FileInputStream("C:/Users/tany1/OneDrive/デスクトップ/kansou-ki.json");
-      FileInputStream refreshToken = new FileInputStream("/home/ubuntu/kansou-ki.json");
+      //FileInputStream refreshToken = new FileInputStream("/home/ubuntu/kansou-ki.json");
       FirestoreOptions firestoreOptions = FirestoreOptions.getDefaultInstance().toBuilder()
-          .setCredentials(GoogleCredentials.fromStream(refreshToken)).build();
+          .setCredentials(GoogleCredentials.getApplicationDefault()).build();
       db = firestoreOptions.getService();
     } catch (IOException e) {
       e.printStackTrace();
@@ -57,7 +56,7 @@ public class FirebaseController {
     try {
       DocumentSnapshot snapshot = future.get();
       classObject = new ClassObject(snapshot);
-      classObject.load(db);
+      classObject.load(db, session.getId());
     } catch (Exception e) {
       System.out.println(e);
     }

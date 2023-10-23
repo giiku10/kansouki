@@ -2,6 +2,7 @@ package com.example.kansouki.model;
 
 import java.util.ArrayList;
 import java.util.List;
+//import java.util.Map;
 
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentSnapshot;
@@ -24,14 +25,14 @@ public class ClassObject {
     name = snapshot.getString("name");
   }
 
-  public void load(Firestore db){
+  public void load(Firestore db, String sessionId){
     ApiFuture<QuerySnapshot> query = db.collection("Parts").whereEqualTo("classId", id).whereEqualTo("parent", "").get();
     try{
       QuerySnapshot querySnapshot = query.get();
       List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
       for (QueryDocumentSnapshot document : documents) {
-        Part part = new Part(document);
-        part.load(db);
+        Part part = new Part(document, sessionId);
+        part.load(db, sessionId);
         questions.add(part);
       }
     }catch(Exception e){
