@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.kansouki.model.ClassObject;
@@ -21,6 +22,7 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.FirestoreOptions;
 import com.google.cloud.firestore.SetOptions;
 
+import io.micrometer.common.lang.Nullable;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -64,7 +66,7 @@ public class FirebaseController {
 
   @PostMapping("/sendValue")
   @ResponseBody
-  public String sendData(String partId, Integer value) {
+  public String sendData(@RequestParam String partId, @RequestParam Integer value) {
     DocumentReference partRef = db.collection("Parts").document(partId);
     Map<String, Map<String, Integer>> difficultyData = new HashMap<>();
     Map<String, Integer> data = new HashMap<>();
