@@ -8,14 +8,13 @@
         <link th:href="@{/css/index.css}" rel="stylesheet">
     </head>
     <body>
-      <div id="main"></div>
+      <div id="main">loading...</div>
       <script type="text/javascript" th:src="@{/js/view.js}"></script>
       <script type="text/javascript" th:src="@{/js/api.js}"></script>
       <script>
         const classId = getParam("class");
         window.onload = function(){
           if(classId == null){
-
           } else{
             $.post("/class", {classId: classId}, function(data){
               console.log(data);

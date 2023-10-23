@@ -1,6 +1,6 @@
 package com.example.kansouki.controller;
 
-import java.io.FileInputStream;
+//import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.kansouki.model.ClassObject;
@@ -21,6 +22,7 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.FirestoreOptions;
 import com.google.cloud.firestore.SetOptions;
 
+import io.micrometer.common.lang.Nullable;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -32,10 +34,9 @@ public class FirebaseController {
 
   public FirebaseController() {
     try {
-      // FileInputStream refreshToken = new FileInputStream("C:/Users/tany1/OneDrive/デスクトップ/kansou-ki.json");
-      FileInputStream refreshToken = new FileInputStream("/home/ubuntu/kansou-ki.json");
+      //FileInputStream refreshToken = new FileInputStream("/home/ubuntu/kansou-ki.json");
       FirestoreOptions firestoreOptions = FirestoreOptions.getDefaultInstance().toBuilder()
-          .setCredentials(GoogleCredentials.fromStream(refreshToken)).build();
+          .setCredentials(GoogleCredentials.getApplicationDefault()).build();
       db = firestoreOptions.getService();
     } catch (IOException e) {
       e.printStackTrace();
@@ -55,7 +56,7 @@ public class FirebaseController {
     try {
       DocumentSnapshot snapshot = future.get();
       classObject = new ClassObject(snapshot);
-      classObject.load(db);
+      classObject.load(db, session.getId());
     } catch (Exception e) {
       System.out.println(e);
     }
@@ -64,7 +65,7 @@ public class FirebaseController {
 
   @PostMapping("/sendValue")
   @ResponseBody
-  public String sendData(String partId, Integer value) {
+  public String sendData(@RequestParam String partId, @RequestParam Integer value) {
     DocumentReference partRef = db.collection("Parts").document(partId);
     Map<String, Map<String, Integer>> difficultyData = new HashMap<>();
     Map<String, Integer> data = new HashMap<>();
