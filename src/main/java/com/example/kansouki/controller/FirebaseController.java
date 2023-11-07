@@ -22,7 +22,7 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.FirestoreOptions;
 import com.google.cloud.firestore.SetOptions;
 
-import io.micrometer.common.lang.Nullable;
+// import io.micrometer.common.lang.Nullable;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -34,7 +34,7 @@ public class FirebaseController {
 
   public FirebaseController() {
     try {
-      //FileInputStream refreshToken = new FileInputStream("/home/ubuntu/kansou-ki.json");
+      // FileInputStream refreshToken = new FileInputStream("/home/ubuntu/kansou-ki.json");
       FirestoreOptions firestoreOptions = FirestoreOptions.getDefaultInstance().toBuilder()
           .setCredentials(GoogleCredentials.getApplicationDefault()).build();
       db = firestoreOptions.getService();

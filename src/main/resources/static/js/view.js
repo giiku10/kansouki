@@ -24,7 +24,12 @@ function writeQuestion(data, id){
   }
   if(Object.keys(data.questions).length == 0){
     childId = "#question-div-" + data.id;
-    $(childId).html("<div class='understand'>理解度メーター </div><h1 style='display:inline;'>😱</h1><input class='meta' type='range' id='question-input-" + data.id + "' onchange='sendData(\"" + data.id + "\")'><h1 style='display:inline;'>😊</h1>");
+    $(childId).html("<div class='understand'>理解度メーター </div><h1 style='display:inline;'>😱</h1><input class='meta' type='range' id='question-input-" + data.id + "' onchange='sendData(\"" + data.id + "\")'><h1 style='display:inline;'>😊</h1><font id='not-input-" + data.id + "' color='#d00'></font>");
+    if(data.difficulty == -1){
+      $("#not-input-" + data.id).html("<b>未入力<b>");
+    } else{
+      $("#question-input-" + data.id).val(100-data.difficulty);
+    }
   }else{
     childId = "#question-ul-" + data.id;
     for(let key of sortedKeys(data.questions)){

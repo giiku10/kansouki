@@ -5,21 +5,30 @@
         <meta charset="UTF-8" />
         <title>感想機</title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js" integrity="sha512-NFUcDlm4V+a2sjPX7gREIXgCSFja9cHtKPOL1zj6QhnE0vcY695MODehqkaGYTLyL2wxe/wtr4Z49SvqXq12UQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <link th:href="@{/css/index.css}" rel="stylesheet">
     </head>
     <body>
-      <div id="main">loading...</div>
+      <center id="url"></center>
+      <div id="main"><h1 aliggn="center">loading...</h1></div>
       <script type="text/javascript" th:src="@{/js/view.js}"></script>
       <script type="text/javascript" th:src="@{/js/api.js}"></script>
       <script>
         const classId = getParam("class");
         window.onload = function(){
           if(classId == null){
+            $("#main").html("<h1 align='center'>無効なURLです。</h1>");
           } else{
             $.post("/class", {classId: classId}, function(data){
-              console.log(data);
               writePage(data);
             });
+            if (navigator.userAgent.match(/iPhone|Android.+Mobile/)) {
+              $("body").css("font-size", "1.5em");
+            } else {
+              const qrText = "http://kansouki.yoshihiserver.com/?class=" + classId;
+              const utf8QrText = unescape(encodeURIComponent(qrText));
+              $("#url").qrcode({text:utf8QrText, background: "rgb(243, 204, 157)"});
+            }
           }
         }
         function getParam(name) {
