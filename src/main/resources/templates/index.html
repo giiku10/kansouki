@@ -19,6 +19,10 @@
           if(classId == null){
             $("#main").html("<h1 align='center'>無効なURLです。</h1>");
           } else{
+            if (navigator.userAgent.match(/iPhone|Android.+Mobile/)) {
+            } else {
+              $('#url').qrcode({text: "http://kansouki.yoshihiserver.com/?class=" + classId , background: "rgb(243, 204, 157)"});
+            }
             $.post("/class", {classId: classId}, function(data){
               writePage(data);
             });
