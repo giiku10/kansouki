@@ -1,6 +1,5 @@
 package com.example.kansouki.controller;
 
-//import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,8 +21,8 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.FirestoreOptions;
 import com.google.cloud.firestore.SetOptions;
 
-// import io.micrometer.common.lang.Nullable;
 import jakarta.servlet.http.HttpSession;
+import lombok.NonNull;
 
 @Controller
 public class FirebaseController {
@@ -32,9 +31,12 @@ public class FirebaseController {
   private HttpSession session;
   private Firestore db;
 
+  String encryptionKey = System.getenv("ENCRYPTION_KEY");
+
   public FirebaseController() {
     try {
-      // FileInputStream refreshToken = new FileInputStream("/home/ubuntu/kansou-ki.json");
+      // FileInputStream refreshToken = new
+      // FileInputStream("/home/ubuntu/kansou-ki.json");
       FirestoreOptions firestoreOptions = FirestoreOptions.getDefaultInstance().toBuilder()
           .setCredentials(GoogleCredentials.getApplicationDefault()).build();
       db = firestoreOptions.getService();
@@ -50,7 +52,7 @@ public class FirebaseController {
 
   @PostMapping("/class")
   @ResponseBody
-  public ClassObject sendClass(String classId) {
+  public ClassObject sendClass(@NonNull String classId) {
     ClassObject classObject = new ClassObject();
     ApiFuture<DocumentSnapshot> future = db.collection("Class").document(classId).get();
     try {
@@ -73,5 +75,27 @@ public class FirebaseController {
     difficultyData.put("difficulty", data);
     partRef.set(difficultyData, SetOptions.merge());
     return "test";
+  }
+
+  @PostMapping("/test")
+  @ResponseBody
+  public String test(@RequestParam String text){
+    return encrypt(encrypt(text));
+  }
+
+  private String encrypt(@NonNull String text){
+    String[] textArray = text.split("");
+    String[] encryptKeyArray = encryptionKey.split("");
+    String returnValue = "";
+    for(int i=0; i<textArray.length; i++ ){
+      returnValue += encryptUnit(text.codePointAt(i), encryptKeyArray[i]);
+    }
+    return returnValue;
+  }
+
+  private String encryptUnit(@NonNull Integer value, @NonNull String key){
+    Integer intKey = Integer.parseInt(key);
+    var outputValue = (value + intKey + 61) % 94 + 33;
+    return Character.toString(outputValue);
   }
 }
