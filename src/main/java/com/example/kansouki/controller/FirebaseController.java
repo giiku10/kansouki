@@ -20,7 +20,10 @@ import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.FirestoreOptions;
 import com.google.cloud.firestore.SetOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseToken;
 
+import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpSession;
 import lombok.NonNull;
 
@@ -81,6 +84,18 @@ public class FirebaseController {
   @ResponseBody
   public String test(@RequestParam String text){
     return encrypt(encrypt(text));
+  }
+
+  @PostMapping("/getUserId")
+  @ResponseBody
+  public @Nullable String getUserId(@RequestParam String token){
+    try{
+      FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(encrypt(token));
+      String uid = decodedToken.getUid();
+      return encrypt(uid);
+    } catch(Exception e){
+      return null;
+    }
   }
 
   private String encrypt(@NonNull String text){
