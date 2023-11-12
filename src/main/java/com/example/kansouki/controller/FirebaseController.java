@@ -20,6 +20,8 @@ import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.FirestoreOptions;
 import com.google.cloud.firestore.SetOptions;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
 
@@ -33,6 +35,7 @@ public class FirebaseController {
   @Autowired
   private HttpSession session;
   private Firestore db;
+  private FirebaseAuth auth;
 
   String encryptionKey = System.getenv("ENCRYPTION_KEY");
 
@@ -43,6 +46,11 @@ public class FirebaseController {
       FirestoreOptions firestoreOptions = FirestoreOptions.getDefaultInstance().toBuilder()
           .setCredentials(GoogleCredentials.getApplicationDefault()).build();
       db = firestoreOptions.getService();
+      FirebaseOptions options = FirebaseOptions.builder()
+          .setCredentials(GoogleCredentials.getApplicationDefault())
+          .build();
+      FirebaseApp app = FirebaseApp.initializeApp(options);
+      auth = FirebaseAuth.getInstance(app);
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -140,8 +148,9 @@ public class FirebaseController {
   @PostMapping("/getUserId")
   @ResponseBody
   public @Nullable String getUserId(@RequestParam String token) {
+    System.out.println(encrypt(token));
     try {
-      FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(encrypt(token));
+      FirebaseToken decodedToken = auth.verifyIdToken(encrypt(token));
       String uid = decodedToken.getUid();
       System.out.println(uid);
       return encrypt(uid);
