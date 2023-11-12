@@ -85,7 +85,7 @@ public class FirebaseController {
   public @Nullable String isEditableClass(@RequestParam @NonNull String classId, @RequestParam String token){
     System.out.println(classId);
     String uid = getUserId(token);
-    if(uid == null){
+    if (uid == null) {
       return null;
     }
 
@@ -93,24 +93,24 @@ public class FirebaseController {
     try {
       DocumentSnapshot snapshot = future.get();
       String classUid = snapshot.getString("userId");
-      if(classUid == null){
+      if (classUid == null) {
         return null;
       }
-      if(classUid.equals(uid)){
+      if (classUid.equals(uid)) {
         return encrypt(uid);
-      } else{
+      } else {
         return null;
       }
-    } catch(Exception e){
+    } catch (Exception e) {
       return null;
     }
   }
 
   @PostMapping("isEditablePart")
   @ResponseBody
-  public Boolean isEditablePart(@RequestParam @NonNull String partId, @RequestParam String token){
+  public Boolean isEditablePart(@RequestParam @NonNull String partId, @RequestParam String token) {
     String uid = getUserId(token);
-    if(uid == null){
+    if (uid == null) {
       return false;
     }
 
@@ -118,48 +118,49 @@ public class FirebaseController {
     try {
       DocumentSnapshot snapshotPart = futurePart.get();
       String classId = snapshotPart.getString("classId");
-      if(classId == null){
+      if (classId == null) {
         return false;
       }
       ApiFuture<DocumentSnapshot> futureClass = db.collection("Class").document(classId).get();
       try {
         DocumentSnapshot snapshotClass = futureClass.get();
         String classUid = snapshotClass.getString("userId");
-        if(classUid == null){
+        if (classUid == null) {
           return false;
         }
         return classId.equals(classUid);
       } catch (Exception e) {
         return false;
       }
-    } catch(Exception e){
+    } catch (Exception e) {
       return false;
     }
   }
 
   @PostMapping("/getUserId")
   @ResponseBody
-  public @Nullable String getUserId(@RequestParam String token){
-    try{
+  public @Nullable String getUserId(@RequestParam String token) {
+    try {
       FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(encrypt(token));
       String uid = decodedToken.getUid();
+      System.out.println(uid);
       return encrypt(uid);
-    } catch(Exception e){
+    } catch (Exception e) {
       return null;
     }
   }
 
-  private @NonNull String encrypt(@NonNull String text){
+  private @NonNull String encrypt(@NonNull String text) {
     String[] textArray = text.split("");
     String[] encryptKeyArray = encryptionKey.split("");
     String returnValue = "";
-    for(int i=0; i<textArray.length; i++){
-      returnValue += encryptUnit(text.codePointAt(i), encryptKeyArray[i%2000]);
+    for (int i = 0; i < textArray.length; i++) {
+      returnValue += encryptUnit(text.codePointAt(i), encryptKeyArray[i % 2000]);
     }
     return returnValue;
   }
 
-  private @NonNull String encryptUnit(@NonNull Integer value, @NonNull String key){
+  private @NonNull String encryptUnit(@NonNull Integer value, @NonNull String key) {
     Integer intKey = Integer.parseInt(key);
     var outputValue = (value + intKey + 61) % 94 + 33;
     return Character.toString(outputValue);
