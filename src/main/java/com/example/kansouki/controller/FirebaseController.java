@@ -146,6 +146,7 @@ public class FirebaseController {
       System.out.println(uid);
       return encrypt(uid);
     } catch (Exception e) {
+      System.err.println("error getting uid");
       return null;
     }
   }
