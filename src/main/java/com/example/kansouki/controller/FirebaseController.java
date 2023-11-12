@@ -83,6 +83,7 @@ public class FirebaseController {
   @PostMapping("isEditableClass")
   @ResponseBody
   public @Nullable String isEditableClass(@RequestParam @NonNull String classId, @RequestParam String token){
+    System.out.println(classId);
     String uid = getUserId(token);
     if(uid == null){
       return null;
