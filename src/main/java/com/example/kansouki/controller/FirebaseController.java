@@ -82,10 +82,10 @@ public class FirebaseController {
 
   @PostMapping("isEditableClass")
   @ResponseBody
-  public Boolean isEditableClass(@RequestParam @NonNull String classId, @RequestParam String token){
+  public @Nullable String isEditableClass(@RequestParam @NonNull String classId, @RequestParam String token){
     String uid = getUserId(token);
     if(uid == null){
-      return false;
+      return null;
     }
 
     ApiFuture<DocumentSnapshot> future = db.collection("Class").document(encrypt(classId)).get();
@@ -93,11 +93,15 @@ public class FirebaseController {
       DocumentSnapshot snapshot = future.get();
       String classUid = snapshot.getString("userId");
       if(classUid == null){
-        return false;
+        return null;
       }
-      return classUid.equals(uid);
+      if(classUid.equals(uid)){
+        return encrypt(uid);
+      } else{
+        return null;
+      }
     } catch(Exception e){
-      return false;
+      return null;
     }
   }
 
