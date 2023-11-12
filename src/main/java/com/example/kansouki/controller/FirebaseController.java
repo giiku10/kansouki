@@ -20,7 +20,10 @@ import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.FirestoreOptions;
 import com.google.cloud.firestore.SetOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseToken;
 
+import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpSession;
 import lombok.NonNull;
 
@@ -67,7 +70,7 @@ public class FirebaseController {
 
   @PostMapping("/sendValue")
   @ResponseBody
-  public String sendData(@RequestParam String partId, @RequestParam Integer value) {
+  public String sendData(@RequestParam @NonNull String partId, @RequestParam Integer value) {
     DocumentReference partRef = db.collection("Parts").document(partId);
     Map<String, Map<String, Integer>> difficultyData = new HashMap<>();
     Map<String, Integer> data = new HashMap<>();
@@ -77,23 +80,81 @@ public class FirebaseController {
     return "test";
   }
 
-  @PostMapping("/test")
+  @PostMapping("isEditableClass")
   @ResponseBody
-  public String test(@RequestParam String text){
-    return encrypt(encrypt(text));
+  public Boolean isEditableClass(@RequestParam @NonNull String classId, @RequestParam String token){
+    String uid = getUserId(token);
+    if(uid == null){
+      return false;
+    }
+
+    ApiFuture<DocumentSnapshot> future = db.collection("Class").document(encrypt(classId)).get();
+    try {
+      DocumentSnapshot snapshot = future.get();
+      String classUid = snapshot.getString("userId");
+      if(classUid == null){
+        return false;
+      }
+      return classUid.equals(uid);
+    } catch(Exception e){
+      return false;
+    }
   }
 
-  private String encrypt(@NonNull String text){
+  @PostMapping("isEditablePart")
+  @ResponseBody
+  public Boolean isEditablePart(@RequestParam @NonNull String partId, @RequestParam String token){
+    String uid = getUserId(token);
+    if(uid == null){
+      return false;
+    }
+
+    ApiFuture<DocumentSnapshot> futurePart = db.collection("Parts").document(encrypt(partId)).get();
+    try {
+      DocumentSnapshot snapshotPart = futurePart.get();
+      String classId = snapshotPart.getString("classId");
+      if(classId == null){
+        return false;
+      }
+      ApiFuture<DocumentSnapshot> futureClass = db.collection("Class").document(classId).get();
+      try {
+        DocumentSnapshot snapshotClass = futureClass.get();
+        String classUid = snapshotClass.getString("userId");
+        if(classUid == null){
+          return false;
+        }
+        return classId.equals(classUid);
+      } catch (Exception e) {
+        return false;
+      }
+    } catch(Exception e){
+      return false;
+    }
+  }
+
+  @PostMapping("/getUserId")
+  @ResponseBody
+  public @Nullable String getUserId(@RequestParam String token){
+    try{
+      FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(encrypt(token));
+      String uid = decodedToken.getUid();
+      return encrypt(uid);
+    } catch(Exception e){
+      return null;
+    }
+  }
+
+  private @NonNull String encrypt(@NonNull String text){
     String[] textArray = text.split("");
     String[] encryptKeyArray = encryptionKey.split("");
     String returnValue = "";
-    for(int i=0; i<textArray.length; i++ ){
-      returnValue += encryptUnit(text.codePointAt(i), encryptKeyArray[i]);
+    for(int i=0; i<textArray.length; i++){
+      returnValue += encryptUnit(text.codePointAt(i), encryptKeyArray[i%2000]);
     }
     return returnValue;
   }
 
-  private String encryptUnit(@NonNull Integer value, @NonNull String key){
+  private @NonNull String encryptUnit(@NonNull Integer value, @NonNull String key){
     Integer intKey = Integer.parseInt(key);
     var outputValue = (value + intKey + 61) % 94 + 33;
     return Character.toString(outputValue);
