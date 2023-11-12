@@ -104,8 +104,8 @@ public class FirebaseController {
       if (classUid == null) {
         return null;
       }
-      if (classUid.equals(uid)) {
-        return encrypt(uid);
+      if (encrypt(classUid).equals(uid)) {
+        return uid;
       } else {
         return null;
       }
@@ -136,7 +136,7 @@ public class FirebaseController {
         if (classUid == null) {
           return false;
         }
-        return classId.equals(classUid);
+        return encrypt(classUid).equals(classUid);
       } catch (Exception e) {
         return false;
       }
